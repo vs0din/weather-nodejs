@@ -32,8 +32,12 @@ app.get('/weatherFrame', (req, res) => {
                 </div>`
 	};
 
-	const handleData = (json) => {
-		const obj = {
+	const handleData = async () => {
+		// ПОСЛЕДНИЙ ЭТАП (ГОТОВ)
+			let url = 'https://weather.cit.api.here.com/weather/1.0/report.json?product=observation&latitude=50.1025&longitude=8.6299&oneobservation=true&app_id=DemoAppId01082013GAL&app_code=AJKnXv84fjrb0KIHawS0Tg';
+			const response = await fetch(url);
+			const json = await response.json();
+			const obj = {
 			'country': json.observations.location[0].country,
 			'city': json.observations.location[0].city,
 			'temperature': json.observations.location[0].observation[0].temperature,
@@ -43,6 +47,7 @@ app.get('/weatherFrame', (req, res) => {
 			'iconLink': json.observations.location[0].observation[0].iconLink,
 		};
 		res.send(getBlockWithData(obj))
+		// ОН ДО СЮДА
 	};
 
 	const clientIP = () => {
@@ -52,7 +57,7 @@ app.get('/weatherFrame', (req, res) => {
 		return ip;
 	};
 
-	let url = 'https://weather.cit.api.here.com/weather/1.0/report.json?product=observation&latitude=50.1025&longitude=8.6299&oneobservation=true&app_id=DemoAppId01082013GAL&app_code=AJKnXv84fjrb0KIHawS0Tg';
+	handleData();
 
 	// const lonLat = (json) => {
 	// 	const obj = {
@@ -67,7 +72,9 @@ app.get('/weatherFrame', (req, res) => {
 	// 	fetchJson.get(url).then(lonLat)
 	// };
 
-	fetchJson.get(url).then(handleData);
+
+
+	// fetchJson.get(url).then(handleData);
 
 });
 
