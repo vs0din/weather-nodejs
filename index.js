@@ -2,15 +2,7 @@
 
 const fetch = require('node-fetch');
 const express = require('express');
-const fetchJson = require('fetch-json');
 
-//fetch('http://51.75.67.87:8080/ukrnet')
-//    .then(res => res.json())
-//    .then(json => {
-//      json.map((data => {
-//        return console.log(data.text)
-//      }))
-//  });
 const app = express();
 const port = 3000;
 
@@ -32,12 +24,26 @@ app.get('/weatherFrame', (req, res) => {
                 </div>`
 	};
 
-	const handleData = async () => {
-		// ПОСЛЕДНИЙ ЭТАП (ГОТОВ)
-			let url = 'https://weather.cit.api.here.com/weather/1.0/report.json?product=observation&latitude=50.1025&longitude=8.6299&oneobservation=true&app_id=DemoAppId01082013GAL&app_code=AJKnXv84fjrb0KIHawS0Tg';
-			const response = await fetch(url);
-			const json = await response.json();
-			const obj = {
+	const clientIP = () => {
+		let ip = req.connection.remoteAddress;
+		let l = ip.lastIndexOf(':');
+		ip = ip.slice(l + 1);
+		// return 'http://ip-api.com/json/' + ip;
+		return 'http://ip-api.com/json/87.123.229.54'
+	};
+
+	const getGeo = async () => {
+		const lonLat = await fetch(clientIP());
+		const lonLatJson = await lonLat.json();
+		const geoObj = await {'lon': lonLatJson.lon, 'lat': lonLatJson.lat};
+		return geoObj;
+	}
+
+	const getWeather = async (geo) => {
+		let url = 'https://weather.cit.api.here.com/weather/1.0/report.json?product=observation&latitude='+geo.lat+'&longitude='+geo.lon+'&oneobservation=true&app_id=DemoAppId01082013GAL&app_code=AJKnXv84fjrb0KIHawS0Tg';
+		const response = await fetch(url);
+		const json = await response.json();
+		const obj = {
 			'country': json.observations.location[0].country,
 			'city': json.observations.location[0].city,
 			'temperature': json.observations.location[0].observation[0].temperature,
@@ -46,35 +52,16 @@ app.get('/weatherFrame', (req, res) => {
 			'description': json.observations.location[0].observation[0].description,
 			'iconLink': json.observations.location[0].observation[0].iconLink,
 		};
-		res.send(getBlockWithData(obj))
-		// ОН ДО СЮДА
+		return obj;
 	};
 
-	const clientIP = () => {
-		let ip = req.connection.remoteAddress;
-		let l = ip.lastIndexOf(':');
-		ip = ip.slice(l + 1);
-		return ip;
+	const handleData = async () => {
+		const geo = await getGeo();
+		const weather = await getWeather(geo);
+		res.send(getBlockWithData(weather))
 	};
 
 	handleData();
-
-	// const lonLat = (json) => {
-	// 	const obj = {
-	// 		'lon': json.lon,
-	// 		'lat': json.lat,
-	// 	};
-	// 	return url
-	// };
-
-	// const getGeoByIp = () => {
-	// 	let url = 'http://ip-api.com/json/' + clientIP();
-	// 	fetchJson.get(url).then(lonLat)
-	// };
-
-
-
-	// fetchJson.get(url).then(handleData);
 
 });
 
