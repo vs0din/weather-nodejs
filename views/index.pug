@@ -1,0 +1,14 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        title Document
+    body
+        .card.warp(style='width: 18rem;')
+            img.warp(style='max-width 100%; and height :auto', src=!{weather}, alt='Card image cap')
+            .card-body
+                h5.card-text Location #{weather.city}, #{weather.country}
+                p.card-text Temperature now : #{Math.round(weather.temperature)}°
+                p.card-text Hightest temperature today: #{Math.round(weather.highTemperature)}°
+                p.card-text Lowest temperature today: #{Math.round(weather.lowTemperature)}°
+                h6.card-text Description: #{weather.description}

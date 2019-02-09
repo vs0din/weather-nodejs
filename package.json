@@ -16,7 +16,8 @@
     "html": "^1.0.0",
     "node-fetch": "^2.3.0",
     "node-fetch-json": "^0.2.1",
-    "node-iframe-replacement": "^1.0.0"
+    "node-iframe-replacement": "^1.0.0",
+    "pug": "^2.0.3"
   },
   "devDependencies": {},
   "description": ""
